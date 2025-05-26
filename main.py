@@ -1,3 +1,4 @@
+import pandas as pd
 import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
@@ -42,10 +43,20 @@ rule8 = ctrl.Rule(jam_belajar_per_hari["cukup"] & jam_tidur_per_hari["cukup"] & 
 nilai_ctrl = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8])
 nilai_simulation = ctrl.ControlSystemSimulation(nilai_ctrl)
 
-nilai_simulation.input["jam_belajar_per_hari"] = 6.9
-nilai_simulation.input["jam_tidur_per_hari"] = 4.6
-nilai_simulation.input["presentase_kehadiran"] = 97.3
+data_siswa = pd.read_csv("C:\\Users\\Azka Zafran\\Documents\\kuliah telkom semester 4\\tugas dasar kecerdasan artifisial\\vscode\\fuzzy-logic\\student_habits_performance.csv")
 
-nilai_simulation.compute()
+mae = 0
+i = 0
+for index, row in data_siswa.iterrows():
+    nilai_simulation.input["jam_belajar_per_hari"] = row["study_hours_per_day"]
+    nilai_simulation.input["jam_tidur_per_hari"] = row["sleep_hours"]
+    nilai_simulation.input["presentase_kehadiran"] = row["attendance_percentage"]
+    nilai_simulation.compute()
+    actual = row["exam_score"]
+    predicted = nilai_simulation.output["nilai_ujian"]
+    mae += abs((actual - predicted))
+    i += 1
 
-print(nilai_simulation.output["nilai_ujian"])
+mae = mae / i
+
+print("Mean Absolute Error: " + str(mae))
