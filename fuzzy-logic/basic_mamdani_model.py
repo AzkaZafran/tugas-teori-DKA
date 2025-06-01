@@ -60,3 +60,5 @@ for index, row in data_siswa.iterrows():
 mae = mae / i
 
 print("Mean Absolute Error: " + str(mae))
+
+fuzz.interp_membership()
